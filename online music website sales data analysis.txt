@@ -25,9 +25,9 @@ ALTER TABLE master modify order_date DATE
 #创建视图，数据为2022年-2023年发生的所有交易数据的数据
 CREATE or replace VIEW view_order_date as 
 SELECT user_id,
-			 date_format(order_date,'%Y-%m') as order_date,  #只取年月
-			 product,
-			 amount
+	date_format(order_date,'%Y-%m') as order_date,  #只取年月
+	product,
+	amount
 FROM master
 
 
@@ -63,10 +63,10 @@ ORDER BY order_date
 #月活  当月有消费的用户定义为活跃用户
 CREATE or replace VIEW yh_view as 
 SELECT order_date,
-			 sum(case when amount > 0 then 1 else 0 end) 消费用户,
-			 sum(case when amount = 0 then 1 else 0 end) 未消费用户,
-			 count(user_id) 总用户,
-			 sum(case when amount > 0 then 1 else 0 end)/count(user_id)月活率
+	sum(case when amount > 0 then 1 else 0 end) 消费用户,
+	sum(case when amount = 0 then 1 else 0 end) 未消费用户,
+	count(user_id) 总用户,
+	sum(case when amount > 0 then 1 else 0 end)/count(user_id)月活率
 FROM view_order_date
 GROUP BY order_date
 ORDER BY order_date
@@ -83,10 +83,10 @@ SELECT
 		ELSE (t1.people1 * 1.0 / t2.people2) * 100 END),2) 留存率
 FROM  
     (SELECT 
-		order_date, 
-		count(user_id) as people1
-		FROM view_order_date 
-		GROUP BY order_date) t1  
+     order_date, 
+     count(user_id) as people1
+     FROM view_order_date 
+     GROUP BY order_date) t1  
 		
 LEFT JOIN  
     (SELECT 
@@ -115,6 +115,7 @@ SELECT
 order_date 日期,sum(case when sum_p > 1 then 1 else 0 end) 复购人数,COUNT(user_id) 总人数,sum(case when sum_p > 1 then 1 else 0 end)/COUNT(user_id) 复购率
 from fg_view
 GROUP BY order_date
+
 
 
 #回购率
