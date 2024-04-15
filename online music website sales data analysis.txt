@@ -74,31 +74,38 @@ ORDER BY order_date
 
 
 #月留存
+
+SELECT
+date_format(日期1,'%Y-%m') as order_date,
+sum(人数1) a,
+sum(人数2) b,
+sum(人数1)/sum(人数2) 月留存率
+FROM (
 SELECT  
     t1.order_date 日期1,  
     t1.people1 人数1,  
-    t2.order_date 日期2,  
-    t2.people2 人数2 ,  
-    ROUND((CASE WHEN t2.people2 = 0 THEN NULL  -- 避免除以零  
-		ELSE (t1.people1 * 1.0 / t2.people2) * 100 END),2) 留存率
+    t2.people2 人数2 
 FROM  
     (SELECT 
-     order_date, 
-     count(user_id) as people1
-     FROM view_order_date 
-     GROUP BY order_date) t1  
-		
+		order_date, 
+		count(user_id) as people1
+		FROM master
+		GROUP BY order_date
+		ORDER BY order_date) t1  
 LEFT JOIN  
     (SELECT 
-    DATE_SUB(order_date, INTERVAL 1 MONTH) AS order_date,  -- 计算 t2 的时间为 t1 时间的前一个月
+    order_date,  
     count(user_id) as people2
-    FROM view_order_date 
-    GROUP BY DATE_SUB(order_date, INTERVAL 1 MONTH)) t2
+    FROM master 
+    GROUP BY order_date
+		ORDER BY order_date) t2
 ON  
-    t1.order_date = t2.order_date  -- 将t1的时间减去一个月，t2拼到对应的时间上  
+    DATE_ADD(t1.order_date, INTERVAL 1 MONTH) = t2.order_date  -- 将t1的时间减去一个月，t2拼到对应的时间上  
 ORDER BY  
     t1.order_date
-
+) as c
+GROUP BY order_date
+ORDER BY order_date
 
 
 #复购率
