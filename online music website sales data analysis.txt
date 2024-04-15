@@ -36,14 +36,14 @@ SELECT order_date,count(product) 订单商品数,ROUND(sum(amount),2) 订单金�
 FROM view_order_date
 GROUP BY order_date
 ORDER BY order_date
-
+-- 在2022-01到2022-03商品的订单数最多，且销售额最高，之后都呈下降趋势
 
 3.用户的主要活跃时间
 SELECT order_date,count(product) 购买总数,sum(amount) 购买总金额
 FROM view_order_date
 GROUP BY order_date
 ORDER BY 购买总数 desc
-
+-- 在2022-01到2022-03是用户最活跃的时间段
 
 4.新增用户的数量、趋势如何？
 SELECT 
